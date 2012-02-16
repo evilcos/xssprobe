@@ -61,7 +61,7 @@ if (!empty($_REQUEST["c"])){
 		fclose($fp);
 	}
 	$fp = fopen("probe_data.html", "a+");
-	fwrite($fp, "$ip | $curtime <br />UserAgent: $useragent <br />Referer: $referer <br />DATA: ".htmlspecialchars(quotes($data))."<br /><br />");
+	fwrite($fp, "".htmlspecialchars(quotes($ip))." | $curtime <br />UserAgent: ".htmlspecialchars(quotes($useragent))." <br />Referer: ".htmlspecialchars(quotes($referer))." <br />DATA: ".htmlspecialchars(quotes($data))."<br /><br />");
 	fclose($fp);
 }
 
