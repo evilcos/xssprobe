@@ -22,9 +22,9 @@ info.browser = function(){
 }();
 info.ua = escape(navigator.userAgent);
 info.lang = navigator.language;
-info.referrer = document.referrer;
-info.location = window.location.href;
-info.toplocation = top.location.href;
+info.referrer = escape(document.referrer);
+info.location = escape(window.location.href);
+info.toplocation = escape(top.location.href);
 info.cookie = escape(document.cookie);
 info.domain = document.domain;
 info.title = document.title;
