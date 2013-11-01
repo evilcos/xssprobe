@@ -62,7 +62,7 @@ if (!empty($_REQUEST["c"])) {
 		quotes($data)."<br /><br />"
 	);
 
-	file_put_contents(FILE_DATA, data, FILE_APPEND);
+	file_put_contents(FILE_DATA, $file_content, FILE_APPEND);
 }
 
 ?>
