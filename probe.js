@@ -45,7 +45,7 @@ info.flash = function(){
 	}
 	else
 	if (window.ActiveXObject) {
-		for (var ii=10;ii>=2;ii--) {
+		for (var ii=20;ii>=2;ii--) {
 			try {
 				var fl=eval("new ActiveXObject('ShockwaveFlash.ShockwaveFlash."+ii+"');");
 				if (fl) {
