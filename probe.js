@@ -69,7 +69,5 @@ function json2str(o) {
 	return '{' + arr.join(',') + '}';
 } 
 
-window.onload = function(){
-	var i = json2str(info);
-	new Image().src = http_server + i;
-}
+var i = json2str(info);
+new Image().src = http_server + i;
